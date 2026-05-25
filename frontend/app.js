@@ -60,6 +60,7 @@ const $form       = document.getElementById('emp-form');
 const $fId        = document.getElementById('f-id');
 const $modalTitle = document.getElementById('modal-title');
 const $delName    = document.getElementById('del-name');
+const $searchInput= document.getElementById('search-input');
 
 let pendingDeleteId = null;
 
@@ -312,6 +313,30 @@ function fmtDate(d) {
 // ---------------------------------------------------------------------------
 
 document.getElementById('btn-add').addEventListener('click', () => openForm());
+
+$searchInput.addEventListener('input', (e) => {
+  const term = e.target.value.toLowerCase();
+  const rows = $tbody.querySelectorAll('tr');
+  let visibleCount = 0;
+  
+  rows.forEach((row) => {
+    const text = row.textContent.toLowerCase();
+    const isVisible = text.includes(term);
+    row.style.display = isVisible ? '' : 'none';
+    if (isVisible) visibleCount++;
+  });
+  
+  // Optionally show/hide empty state if everything is filtered out
+  if (rows.length > 0) {
+    if (visibleCount === 0) {
+      $empty.style.display = 'block';
+      $empty.innerHTML = '<p>No employees match your search.</p>';
+    } else {
+      $empty.style.display = 'none';
+      $empty.innerHTML = '<p>No employees yet. Click <strong>+ Add Employee</strong> to get started.</p>';
+    }
+  }
+});
 
 document.getElementById('modal-x').addEventListener('click', closeForm);
 document.getElementById('modal-cancel').addEventListener('click', closeForm);
